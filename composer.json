@@ -1,5 +1,5 @@
 {
-    "name": "flowerallure/php-frame",
+    "name": "flowerallure/frame-design",
     "autoload": {
         "psr-4": {
             "App\\": "src/",
