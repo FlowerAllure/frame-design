@@ -26,9 +26,8 @@ function endView(): void
     $time = microtime(true) - FRAME_START_TIME;
     $memory = memory_get_usage() - FRAME_START_MEMORY;
 
-    echo '<hr/>';
-    echo '运行时间: ' . round($time * 1000, 2) . 'ms<br/>';
-    echo '消耗内存: ' . round($memory / 1024 / 1024, 2) . 'm';
+    echo '<hr/>运行时间: ' . round($time * 1000, 2) . 'ms';
+    echo '<br/>消耗内存: ' . round($memory / 1024 / 1024, 2) . 'm';
 }
 
 function config($key = null)
