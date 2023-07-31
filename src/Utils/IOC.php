@@ -11,24 +11,26 @@ class IOC
 
     public function bind(string $abstract, mixed $concrete): void
     {
-        $this->binding[$abstract]['concrete'] = fn($ioc) => $ioc->build($concrete);
+        $this->binding[$abstract]['concrete'] = fn ($ioc) => $ioc->build($concrete);
     }
 
     public function make($abstract)
     {
         $concrete = $this->binding[$abstract]['concrete'];
+
         return $concrete($this);
     }
 
     public function build($concrete): ?object
     {
-        $reflector= new ReflectionClass($concrete);
+        $reflector = new ReflectionClass($concrete);
         $constructor = $reflector->getConstructor();
         if (is_null($constructor)) {
             return $reflector->newInstance();
         }
         $dependencies = $constructor->getParameters();
         $args = $this->getDependencies($dependencies);
+
         return $reflector->newInstanceArgs($args);
     }
 

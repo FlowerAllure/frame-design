@@ -1,9 +1,17 @@
 <?php
 
+use App\Middleware\WebMiddleWare;
+use Core\Config;
+use Core\Database;
 use Core\IOC;
+use Core\PipeLine;
 use Core\Response;
+use Core\Router;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
+const FRAME_BASE_PATH = __DIR__; // 框架目录
 define('FRAME_START_TIME', microtime(true)); // 开始时间
 define('FRAME_START_MEMORY', memory_get_usage()); // 开始内存
 
@@ -20,10 +28,6 @@ class App implements ContainerInterface
         $this->boot();
     }
 
-    /**
-     * @param string $id
-     * @return mixed
-     */
     public function get(string $id): mixed
     {
         return $this->has($id) ? $this->instances[$id] : $this->make($id);
@@ -34,7 +38,7 @@ class App implements ContainerInterface
         return isset($this->instances[$id]);
     }
 
-    public static function getContainer(): App
+    public static function getContainer(): self
     {
         return self::$instance ?? self::$instance = new self();
     }
@@ -43,7 +47,11 @@ class App implements ContainerInterface
     protected function register(): void
     {
         $registers = [
-            'response' => Response::class
+            'response' => Response::class,
+            'router' => Router::class,
+            'pipeLine' => PipeLine::class,
+            'config' => Config::class,
+            'db' => Database::class,
         ];
         foreach ($registers as $name => $register) {
             $this->bind($name, $register, true);
@@ -51,8 +59,28 @@ class App implements ContainerInterface
     }
 
     // 服务启动
-    protected function boot()
-    {
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    protected function boot(): void
+    {
+        self::getContainer()->get('config')->init();
+        self::getContainer()->get('router')->group([
+            'namespace' => 'App\\Controller',
+            'middleware' => [
+                WebMiddleWare::class,
+            ],
+        ], function ($router) {
+            require_once FRAME_BASE_PATH . '/routes/web.php';
+        });
+
+        self::getContainer()->get('router')->group([
+            'namespace' => 'App\\Controller',
+            'prefix' => 'api',
+        ], function ($router) {
+            require_once FRAME_BASE_PATH . '/routes/api.php';
+        });
     }
 }

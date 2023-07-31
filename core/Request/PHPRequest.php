@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\request;
+namespace Core\Request;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;

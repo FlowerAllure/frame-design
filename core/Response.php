@@ -8,36 +8,39 @@ use Psr\Http\Message\StreamInterface;
 class Response implements ResponseInterface
 {
     protected array $headers = []; // 要发送的请求头
-    protected string $content = ''; // 要发送的内容
+    protected string|null $content; // 要发送的内容
     protected int $code = 200; // 发送状态码
 
     public function sendHeaders(): void // 发送请求头
     {
-        foreach ($this->headers as $key => $header)
-            header($key.': '.$header);
+        foreach ($this->headers as $key => $header) {
+            header($key . ': ' . $header);
+        }
     }
 
     public function sendContent(): void // 发送内容
     {
-        echo $this->content;
+        echo $this->content . PHP_EOL;
     }
 
     public function send(): static // 发送
     {
         $this->sendHeaders();
         $this->sendContent();
+
         return $this;
     }
 
     public function setContent($content): static // 设置内容
     {
-        if( is_array($content))
+        if (is_array($content)) {
             $content = json_encode($content);
+        }
 
         $this->content = $content;
+
         return $this;
     }
-
 
     public function getContent(): string // 获取内容
     {
@@ -47,6 +50,7 @@ class Response implements ResponseInterface
     public function setCode(int $code): static // 设置状态码
     {
         $this->code = $code;
+
         return $this;
     }
 

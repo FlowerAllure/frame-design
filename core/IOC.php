@@ -2,6 +2,7 @@
 
 namespace Core;
 
+use Closure;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionParameter;
@@ -14,7 +15,7 @@ trait IOC
 
     public function bind(string $id, mixed $concrete, bool $is_singleton = false): void
     {
-        if (! $concrete instanceof \Closure) {
+        if (!$concrete instanceof Closure) {
             $concrete = function ($app) use ($concrete) {
                 return $app->build($concrete);
             };
@@ -24,34 +25,19 @@ trait IOC
     }
 
     /**
-     * @param mixed $concrete
-     * @return object|null
      * @throws ReflectionException
      */
     public function build(mixed $concrete): ?object
     {
         $reflector = new ReflectionClass($concrete); // 反射
         $constructor = $reflector->getConstructor(); // 获取构造函数
-        if( is_null($constructor))
-            return $reflector->newInstance(); // 没有构造函数？那就是没有依赖 直接返回实例
+        if (is_null($constructor)) {
+            return $reflector->newInstance();
+        } // 没有构造函数？那就是没有依赖 直接返回实例
         $dependencies = $constructor->getParameters(); // 获取构造函数的参数
         $instances = $this->getDependencies($dependencies);  // 当前类的所有实例化的依赖
+
         return $reflector->newInstanceArgs($instances); // 跟new 类($instances); 一样了
-    }
-
-
-    /**
-     * @param ReflectionParameter[] $parameters
-     * @return array
-     */
-    protected function getDependencies(array $parameters): array
-    {
-        $dependencies = []; // 当前类的所有依赖
-        foreach ($parameters as $parameter)
-            if ($parameter->getType()) {
-                $dependencies[] = $this->make($parameter->getType()->getName());
-            }
-        return $dependencies;
     }
 
     public function make($abstract)
@@ -62,5 +48,20 @@ trait IOC
         }
 
         return $instance;
+    }
+
+    /**
+     * @param ReflectionParameter[] $parameters
+     */
+    protected function getDependencies(array $parameters): array
+    {
+        $dependencies = []; // 当前类的所有依赖
+        foreach ($parameters as $parameter) {
+            if ($parameter->getType()) {
+                $dependencies[] = $this->make($parameter->getType()->getName());
+            }
+        }
+
+        return $dependencies;
     }
 }

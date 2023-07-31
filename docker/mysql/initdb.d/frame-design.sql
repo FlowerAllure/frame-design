@@ -1,0 +1,6 @@
+CREATE DATABASE IF NOT EXISTS frame_design CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `name` varchar(255) DEFAULT ''
+)

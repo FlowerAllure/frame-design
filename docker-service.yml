@@ -1,0 +1,28 @@
+version: '3'
+services:
+    mysql:
+        image: mysql:8.0
+        container_name: frame-design-mysql
+        hostname: mysql
+        privileged: true
+        ports:
+            - "3306:3306"
+        volumes:
+        - ./docker/mysql/my.cnf:/etc/my.cnf
+        - ./docker/mysql/my.cnf.d:/etc/my.cnf.d
+        - ./docker/mysql/initdb.d:/docker-entrypoint-initdb.d
+        - mysql-data:/var/lib/mysql
+        env_file: .env
+        environment:
+            TZ: Asia/Shanghai
+    adminer:
+        image: adminer
+        container_name: frame-design-adminer
+        hostname: adminer
+        ports:
+            - "8080:8080"
+        depends_on:
+            - mysql
+volumes:
+    mysql-data:
+        driver: local
