@@ -89,6 +89,17 @@ class Router
         $routerDispatch = $route['action']['uses'];
         $middleware = $route['action']['middleware'] ?? [];
 
+        if (!$routerDispatch instanceof Closure) {
+            $action = $route['action'];
+            $uses = explode('@', $action['uses']);
+            $controller = $action['namespace'] . '\\' . $uses[0]; // 控制器
+            $method = $uses[1]; // 执行的方法
+            $controllerInstance = new $controller();
+            $middleware = array_merge($middleware, $controllerInstance->getMiddleware()); // 合并控制器中间件
+            $routerDispatch = function ($request) use ($controllerInstance, $method) {
+                return $controllerInstance->callAction($method, [$request]);
+            };
+        }
         // return $routerDispatch();
         $routerClosure = App::getContainer()->get('pipeLine')->create()->setClass($middleware)->run($routerDispatch);
 

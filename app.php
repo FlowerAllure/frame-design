@@ -2,11 +2,12 @@
 
 use App\Middleware\WebMiddleWare;
 use Core\Config;
-use Core\Database;
+use Core\Database\Database;
 use Core\IOC;
 use Core\PipeLine;
 use Core\Response;
 use Core\Router;
+use Core\View\View;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -52,6 +53,7 @@ class App implements ContainerInterface
             'pipeLine' => PipeLine::class,
             'config' => Config::class,
             'db' => Database::class,
+            'view' => View::class,
         ];
         foreach ($registers as $name => $register) {
             $this->bind($name, $register, true);
@@ -67,6 +69,7 @@ class App implements ContainerInterface
     protected function boot(): void
     {
         self::getContainer()->get('config')->init();
+        self::getContainer()->get('view')->init();
         self::getContainer()->get('router')->group([
             'namespace' => 'App\\Controller',
             'middleware' => [

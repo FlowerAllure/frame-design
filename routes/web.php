@@ -17,5 +17,15 @@ $router->get('/db', function () {
 });
 
 $router->get('/query', function () {
-    var_dump(App::getContainer()->get('db')->table('users')->where('id', '<>' , 10)->get());
+    var_dump(App::getContainer()->get('db')->table('users')->where('id', '<>', 10)->get());
+});
+
+$router->get('/model', function () {
+    var_dump(\App\Models\User::where('id', '<>', 10)->get());
+});
+
+$router->get('/controller', 'UserController@index');
+
+$router->get('/view/blade', function () {
+    return App::getContainer()->get('view')->render('index.html', ['name' => 'Twig']);
 });
