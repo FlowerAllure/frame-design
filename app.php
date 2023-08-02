@@ -1,9 +1,11 @@
 <?php
 
+use App\Exceptions\HandleExceptions;
 use App\Middleware\WebMiddleWare;
 use Core\Config;
 use Core\Database\Database;
 use Core\IOC;
+use Core\Logger\Logger;
 use Core\PipeLine;
 use Core\Response;
 use Core\Router;
@@ -54,6 +56,8 @@ class App implements ContainerInterface
             'config' => Config::class,
             'db' => Database::class,
             'view' => View::class,
+            'log' => Logger::class,
+            'exception' => HandleExceptions::class,
         ];
         foreach ($registers as $name => $register) {
             $this->bind($name, $register, true);
@@ -69,6 +73,7 @@ class App implements ContainerInterface
     protected function boot(): void
     {
         self::getContainer()->get('config')->init();
+        self::getContainer()->get('exception')->init();
         self::getContainer()->get('view')->init();
         self::getContainer()->get('router')->group([
             'namespace' => 'App\\Controller',

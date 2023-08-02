@@ -1,5 +1,7 @@
 <?php
 
+use App\Exceptions\ErrorMessageException;
+
 if (!isset($router)) {
     return;
 }
@@ -28,4 +30,18 @@ $router->get('/controller', 'UserController@index');
 
 $router->get('/view/blade', function () {
     return App::getContainer()->get('view')->render('index.html', ['name' => 'Twig']);
+});
+
+$router->get('/log/stack', function () {
+    App::getContainer()->get('log')->debug('{language} is the best language', ['language' => 'php']);
+    App::getContainer()->get('log')->info('Hello World');
+});
+
+$router->get('exception', function () {
+    throw new ErrorMessageException('the server did not want to bird you and threw an exception');
+});
+
+$router->get('error', function () {
+    //    ErrorMessageException
+    //    12321
 });

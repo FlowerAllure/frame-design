@@ -1,7 +1,7 @@
 <?php
 
 // 开发期间 显示所有错误
-error_reporting(E_ALL);
+error_reporting(E_ALL | E_STRICT);
 date_default_timezone_set('Asia/Shanghai');
 
 use Core\Request\PHPRequest;

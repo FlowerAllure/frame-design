@@ -111,7 +111,7 @@ class Response implements ResponseInterface
 
     public function getStatusCode()
     {
-        // TODO: Implement getStatusCode() method.
+        return $this->code;
     }
 
     public function withStatus(int $code, string $reasonPhrase = '')

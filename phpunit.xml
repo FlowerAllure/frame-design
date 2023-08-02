@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- failOnRisky="true"   表示是否在测试中发现风险时使测试失败。-->
+<!-- failOnWarning="true" 表示是否在测试中发现警告时使测试失败。 -->
+<!-- cacheResult="false"   Do not write test results to cache file. -->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         cacheResult="false">
+    <testsuites>
+        <testsuite name="default">
+            <directory >./tests</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory>./src</directory>
+        </include>
+    </source>
+    <php>
+        <env name="APP_ENV" value="testing"/>
+    </php>
+</phpunit>
